@@ -1,6 +1,6 @@
 import requests
 import logging
-from datetime import datetime
+import datetime
 
 # ================= CONFIG =================
 KURAL_API_KEY = "YOUR_API_KEY" #getthirukkural website
@@ -80,7 +80,12 @@ def send_whatsapp_message(message: str):
 
 if __name__ == "__main__":
     logging.info("=== Thirukkural Bot Started ===")
-    kural = fetch_kural(KURAL_NUMBER)
+    # Sequential kural logic
+    START_DATE = datetime.date(2025, 8, 20)
+    today = datetime.date.today()
+    days_passed = (today - START_DATE).days
+    kural_number = (days_passed % 1330) + 1
+    kural = fetch_kural(kural_number)
     if kural:
         msg = format_message(kural)
         result = send_whatsapp_message(msg)
