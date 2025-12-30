@@ -1,14 +1,21 @@
+from dotenv import load_dotenv
+import os
 import requests
 import logging
 import datetime
 
+load_dotenv()
+
 # ================= CONFIG =================
-KURAL_API_KEY = "YOUR_API_KEY" #getthirukkural website
+KURAL_API_KEY = os.getenv("KURAL_API_KEY")    
+WHAPI_TOKEN = os.getenv("WHAPI_TOKEN")        
 KURAL_API_URL = "https://getthirukkural.appspot.com/api/3.0/kural/{num}?appid={api_key}&format=json"
 
 WHAPI_URL = "https://gate.whapi.cloud/messages/text"
-WHAPI_TOKEN = "YOUR_API_TOKEN"   # Replace with your WHAPI token
-WHATSAPP_GROUP_ID = "GROUP_ID"
+WHATSAPP_GROUP_ID = [
+                     "120363386406802027@g.us",
+                     "120363024850122362@g.us"
+                    ]
 
 KURAL_NUMBER = 1                   # You can randomize later
 KURAL_URAI_VERSION = "urai2"       # Change to urai1 / urai2 / urai3
@@ -58,25 +65,31 @@ def format_message(data: dict) -> str:
         return "❌ குறள் தகவலை பெற முடியவில்லை."
 
 def send_whatsapp_message(message: str):
-    """Send message to WhatsApp via Whapi"""
-    try:
-        payload = {
-            "to": WHATSAPP_GROUP_ID,
-            "body": message
-        }
-        headers = {"Authorization": f"Bearer {WHAPI_TOKEN}"}
-        response = requests.post(WHAPI_URL, headers=headers, json=payload)
-        response.raise_for_status()
+    """Send message to multiple WhatsApp groups via Whapi"""
+    results = {}
+    for group_id in WHATSAPP_GROUP_ID:
         try:
-            result = response.json()
-        except ValueError:
-            logging.error(f"Non-JSON response: {response.text}")
-            return {"error": "Invalid JSON", "raw": response.text}
-        logging.info("Message sent successfully")
-        return result
-    except Exception as e:
-        logging.error(f"Error sending WhatsApp message: {e}")
-        return None
+            payload = {
+                "to": group_id,
+                "body": message
+            }
+            headers = {"Authorization": f"Bearer {WHAPI_TOKEN}"}
+            response = requests.post(WHAPI_URL, headers=headers, json=payload)
+            response.raise_for_status()
+            
+            try:
+                result = response.json()
+            except ValueError:
+                logging.error(f"Non-JSON response for {group_id}: {response.text}")
+                results[group_id] = {"error": "Invalid JSON", "raw": response.text}
+                continue
+            
+            logging.info(f"Message sent successfully to {group_id}")
+            results[group_id] = result
+        except Exception as e:
+            logging.error(f"Error sending WhatsApp message to {group_id}: {e}")
+            results[group_id] = {"error": str(e)}
+    return results
 
 if __name__ == "__main__":
     logging.info("=== Thirukkural Bot Started ===")
