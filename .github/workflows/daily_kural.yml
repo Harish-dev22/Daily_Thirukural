@@ -2,7 +2,7 @@ name: Daily Thirukkural Notification
 
 on:
   schedule:
-    - cron: "45 3 * * *"   # Runs daily 9 AM IST
+    - cron: "45 3 * * *"   # Runs daily 9 AM IST 
   workflow_dispatch:        # Allow manual trigger
 
 jobs:
