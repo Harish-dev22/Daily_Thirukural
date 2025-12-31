@@ -94,7 +94,7 @@ def send_whatsapp_message(message: str):
 if __name__ == "__main__":
     logging.info("=== Thirukkural Bot Started ===")
     # Sequential kural logic
-    START_DATE = datetime.date(2025, 8, 20)
+    START_DATE = datetime.date(2025, 9, 6)
     today = datetime.date.today()
     days_passed = (today - START_DATE).days
     kural_number = (days_passed % 1330) + 1
