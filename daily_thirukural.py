@@ -13,7 +13,7 @@ KURAL_API_URL = "https://getthirukkural.appspot.com/api/3.0/kural/{num}?appid={a
 
 WHAPI_URL = "https://gate.whapi.cloud/messages/text"
 WHATSAPP_GROUP_ID = [
-                     "120363386406802027@g.us",
+                     "918939340740-1628681285@g.us",
                      "120363024850122362@g.us"
                     ]
 
